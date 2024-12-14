@@ -92,6 +92,7 @@ const client = new OAuthClient({
     client.logout();
     userInfoDiv.textContent = 'Logged out.';
     timerDiv.textContent = '';
+    clearInterval(tokenRefreshInterval);
   });
   
   // On page load, check for existing token or handle callback
