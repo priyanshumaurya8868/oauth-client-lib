@@ -19,16 +19,53 @@ const client = new OAuthClient({
   const refreshButton = document.getElementById('refresh-button');
   const logoutButton = document.getElementById('logout-button');
   const userInfoDiv = document.getElementById('user-info');
+  const timerDiv = document.getElementById('token-timer');
   
-  // Function to display the access token
+  let tokenRefreshInterval;
+  
+  // Function to display the access token and expiration timer
   function displayToken() {
     const tokenData = client.getToken();
+  
     if (tokenData && tokenData.access_token) {
       userInfoDiv.textContent = `Access Token: ${tokenData.access_token}`;
+      showTokenExpiration(tokenData);
     } else {
       userInfoDiv.textContent = 'No token found. Please log in.';
+      timerDiv.textContent = '';
     }
+  }  
+  
+  // Function to show the token expiration countdown
+  function showTokenExpiration(tokenData) {
+    clearInterval(tokenRefreshInterval); // Clear any existing interval
+  
+    const expiresIn = tokenData.expires_in; // Token expiration in seconds
+    const issuedAt = tokenData.issued_at;   // Retrieve issued_at from tokenData
+  
+    const expirationTime = issuedAt + expiresIn * 1000;
+  
+    function updateTimer() {
+      const now = Date.now();
+      const remainingTime = Math.max(0, expirationTime - now);
+  
+      const minutes = Math.floor(remainingTime / 60000);
+      const seconds = Math.floor((remainingTime % 60000) / 1000);
+  
+      timerDiv.textContent = `Token expires in: ${minutes}m ${seconds}s`;
+  
+      if (remainingTime <= 0) {
+        clearInterval(tokenRefreshInterval);
+        timerDiv.textContent = 'Token has expired. Please refresh the token.';
+        userInfoDiv.textContent = 'Token expired. Please log in again.';
+      }
+    }
+  
+    // Update the timer immediately and every second
+    updateTimer();
+    tokenRefreshInterval = setInterval(updateTimer, 1000);
   }
+  
   
   // Event listeners
   loginButton.addEventListener('click', () => {
@@ -41,12 +78,14 @@ const client = new OAuthClient({
       displayToken();
     } catch {
       userInfoDiv.textContent = 'Failed to refresh token.';
+      timerDiv.textContent = '';
     }
   });
   
   logoutButton.addEventListener('click', () => {
     client.logout();
     userInfoDiv.textContent = 'Logged out.';
+    timerDiv.textContent = '';
   });
   
   // On page load, check for existing token or handle callback
@@ -54,15 +93,28 @@ const client = new OAuthClient({
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
   
-    if (code) {
+    // Check if a valid token already exists in localStorage
+    const existingToken = client.getToken();
+  
+    if (existingToken && existingToken.access_token) {
+      displayToken(); // Display the existing token if available
+    } else if (code) {
       try {
         const tokenData = await client.handleCallback(code);
+        tokenData.issued_at = Date.now(); // Store the token issuance time
+        client.storeToken(tokenData);
+  
+        // Remove the code from the URL after successful exchange
+        window.history.replaceState({}, document.title, window.location.pathname);
+  
         displayToken();
       } catch (error) {
         userInfoDiv.textContent = 'Failed to authenticate.';
+        timerDiv.textContent = '';
+        console.error('Error exchanging code for token:', error);
       }
     } else {
-      displayToken();
+      userInfoDiv.textContent = 'No token found. Please log in.';
     }
   });
   
