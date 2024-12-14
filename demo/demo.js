@@ -41,7 +41,13 @@ const client = new OAuthClient({
     clearInterval(tokenRefreshInterval); // Clear any existing interval
   
     const expiresIn = tokenData.expires_in; // Token expiration in seconds
-    const issuedAt = tokenData.issued_at;   // Retrieve issued_at from tokenData
+    let issuedAt = tokenData.issued_at;
+  
+    if (!issuedAt) {
+      issuedAt = Date.now();
+      tokenData.issued_at = issuedAt;
+      client.storeToken(tokenData); // Update localStorage with issued_at
+    }
   
     const expirationTime = issuedAt + expiresIn * 1000;
   
