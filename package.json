@@ -1,0 +1,16 @@
+{
+  "name": "oauth-client-lib",
+  "version": "1.0.0",
+  "description": "A JavaScript library for OAuth 2.0 authorization flows",
+  "main": "lib/oauthClient.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx live-server --port=3000"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.9"
+  }
+}
