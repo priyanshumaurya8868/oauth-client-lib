@@ -1,8 +1,8 @@
 import OAuthClient from 'https://cdn.jsdelivr.net/npm/oauth-client-lib@1.0.2/oauthClient.js';
 
-const CLIENT_ID  = process.env.CLIENT_ID
-const DOMAIN = process.env.DOMAIN
-const REDIRECT_URI = process.env.REDIRECT_URL_FRONTEND
+const CLIENT_ID  = process.env.NEXT_PUBLIC_CLIENT_ID
+const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN
+const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URL
 
 const TOKEN_URL = `https://${DOMAIN}/oauth/token`;
 const REVOKE_URL = `https://${DOMAIN}/oauth/revoke`;
