@@ -1,8 +1,9 @@
-import OAuthClient from 'https://cdn.jsdelivr.net/npm/oauth-client-lib@1.0.2/oauthClient.js';
+import OAuthClient from "https://cdn.jsdelivr.net/npm/oauth-client-lib@1.0.2/oauthClient.js";
 
-const CLIENT_ID  =' 9wz6fewBMcSuEtMmlLNHu5aS5Fw2L1jp'
-const DOMAIN = 'dev-tinj28mfna224mob.us.auth0.com'
-const REDIRECT_URI = 'https://oauth-client-9a576u0wt-tech-priyanshu-projects.vercel.app/'
+const CLIENT_ID = "9wz6fewBMcSuEtMmlLNHu5aS5Fw2L1jp";
+const DOMAIN = "dev-tinj28mfna224mob.us.auth0.com";
+const REDIRECT_URI =
+  "https://oauth-client-9a576u0wt-tech-priyanshu-projects.vercel.app/";
 
 const TOKEN_URL = `https://${DOMAIN}/oauth/token`;
 const REVOKE_URL = `https://${DOMAIN}/oauth/revoke`;
@@ -12,14 +13,14 @@ const client = new OAuthClient({
   redirectUri: REDIRECT_URI,
   authUrl: `https://${DOMAIN}/authorize`,
   tokenUrl: TOKEN_URL,
-  revokeUrl: REVOKE_URL
+  revokeUrl: REVOKE_URL,
 });
 
-const loginButton = document.getElementById('login-button');
-const refreshButton = document.getElementById('refresh-button');
-const logoutButton = document.getElementById('logout-button');
-const userInfoDiv = document.getElementById('user-info');
-const timerDiv = document.getElementById('token-timer');
+const loginButton = document.getElementById("login-button");
+const refreshButton = document.getElementById("refresh-button");
+const logoutButton = document.getElementById("logout-button");
+const userInfoDiv = document.getElementById("user-info");
+const timerDiv = document.getElementById("token-timer");
 
 let tokenRefreshInterval;
 
@@ -31,8 +32,8 @@ async function displayToken() {
     userInfoDiv.textContent = `Access Token: ${tokenData.access_token}`;
     showTokenExpiration(tokenData);
   } else {
-    userInfoDiv.textContent = 'No token found. Please log in.';
-    timerDiv.textContent = '';
+    userInfoDiv.textContent = "No token found. Please log in.";
+    timerDiv.textContent = "";
   }
 }
 
@@ -62,8 +63,8 @@ function showTokenExpiration(tokenData) {
 
     if (remainingTime <= 0) {
       clearInterval(tokenRefreshInterval);
-      timerDiv.textContent = 'Token has expired. Please refresh the token.';
-      userInfoDiv.textContent = 'Token expired. Please log in again.';
+      timerDiv.textContent = "Token has expired. Please refresh the token.";
+      userInfoDiv.textContent = "Token expired. Please log in again.";
     }
   }
 
@@ -73,31 +74,31 @@ function showTokenExpiration(tokenData) {
 }
 
 // Event listeners
-loginButton.addEventListener('click', async () => {
+loginButton.addEventListener("click", async () => {
   await client.startAuthFlow();
 });
 
-refreshButton.addEventListener('click', async () => {
+refreshButton.addEventListener("click", async () => {
   try {
     await client.refreshToken();
     await displayToken();
   } catch {
-    userInfoDiv.textContent = 'Failed to refresh token.';
-    timerDiv.textContent = '';
+    userInfoDiv.textContent = "Failed to refresh token.";
+    timerDiv.textContent = "";
   }
 });
 
-logoutButton.addEventListener('click', async () => {
+logoutButton.addEventListener("click", async () => {
   await client.logout();
-  userInfoDiv.textContent = 'Logged out.';
-  timerDiv.textContent = '';
+  userInfoDiv.textContent = "Logged out.";
+  timerDiv.textContent = "";
   clearInterval(tokenRefreshInterval);
 });
 
 // On page load, check for existing token or handle callback
-window.addEventListener('load', async () => {
+window.addEventListener("load", async () => {
   const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
+  const code = params.get("code");
 
   // Check if a valid token already exists in localStorage
   const existingToken = await client.getToken();
@@ -115,11 +116,11 @@ window.addEventListener('load', async () => {
 
       await displayToken();
     } catch (error) {
-      userInfoDiv.textContent = 'Failed to authenticate.';
-      timerDiv.textContent = '';
-      console.error('Error exchanging code for token:', error);
+      userInfoDiv.textContent = "Failed to authenticate.";
+      timerDiv.textContent = "";
+      console.error("Error exchanging code for token:", error);
     }
   } else {
-    userInfoDiv.textContent = 'No token found. Please log in.';
+    userInfoDiv.textContent = "No token found. Please log in.";
   }
 });

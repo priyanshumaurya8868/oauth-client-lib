@@ -2,9 +2,9 @@ import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import OAuthClient from "../lib/oauthClient.js";
-import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,16 +25,18 @@ const client = new OAuthClient({
 });
 
 // Catch-all route to serve 'index.html' for frontend routes
-app.use(express.static(path.join(__dirname, '../demo'), {
+app.use(
+  express.static(path.join(__dirname, "../demo"), {
     setHeaders: (res, path) => {
-      if (path.endsWith('.js')) {
-        res.setHeader('Content-Type', 'application/javascript');
+      if (path.endsWith(".js")) {
+        res.setHeader("Content-Type", "application/javascript");
       }
-    }
-  }));
+    },
+  })
+);
 
 // Route to initiate the OAuth flow
-app.get("/api/login", async(req, res) => {
+app.get("/api/login", async (req, res) => {
   try {
     const authUrl = await client.startAuthFlow();
     res.redirect(authUrl);
