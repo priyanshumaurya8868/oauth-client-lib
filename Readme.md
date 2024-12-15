@@ -212,6 +212,104 @@ window.addEventListener("load", async () => {
 });
 ```
 
+## 🖥️ **Backend (`server.js`)**
+
+### **Description**
+
+The `server.js` file demonstrates how to use the **OAuth Client Library** in a **Node.js + Express** backend environment. It includes routes for:
+
+1. **Starting the OAuth flow** (`/api/login`).
+2. **Handling the callback** from the OAuth provider (`/api/callback`).
+3. **Accessing a protected route** (`/api/profile`).
+
+### **Code**
+
+```javascript
+import "dotenv/config";
+import express from "express";
+import cookieParser from "cookie-parser";
+import OAuthClient from "../lib/oauthClient.js";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 4000;
+
+app.use(cookieParser());
+app.use(express.json());
+app.use(cors());
+
+const client = new OAuthClient({
+  clientId: process.env.CLIENT_ID,
+  redirectUri: process.env.REDIRECT_URI,
+  authUrl: process.env.AUTH_URL,
+  tokenUrl: process.env.TOKEN_URL,
+});
+
+// Serve static files (frontend demo)
+app.use(
+  express.static(path.join(__dirname, "../demo"), {
+    setHeaders: (res, path) => {
+      if (path.endsWith(".js")) {
+        res.setHeader("Content-Type", "application/javascript");
+      }
+    },
+  })
+);
+
+// Route to initiate the OAuth flow
+app.get("/api/login", async (req, res) => {
+  try {
+    const authUrl = await client.startAuthFlow();
+    res.redirect(authUrl);
+  } catch (error) {
+    console.error("Error starting auth flow:", error);
+    res.status(500).send("Error starting auth flow");
+  }
+});
+
+// Callback route to handle the OAuth provider's response
+app.get("/api/callback", async (req, res) => {
+  const { code } = req.query;
+  try {
+    const tokenData = await client.handleCallback(code);
+    res.cookie("access_token", tokenData.access_token, {
+      httpOnly: true,  // Protect cookie from being accessed by JavaScript
+      // secure: true, // Uncomment for HTTPS
+      // sameSite: 'strict' // Uncomment for CSRF protection
+    });
+    res.send("Authentication successful! You can now access protected routes.");
+  } catch (error) {
+    console.error("Error handling callback:", error);
+    res.status(500).send("Error handling callback");
+  }
+});
+
+// Protected route example
+app.get("/api/profile", async (req, res) => {
+  const token = req.cookies.access_token;
+  if (!token) {
+    return res.status(401).send("Unauthorized: No token found");
+  }
+
+  try {
+    res.send("Protected data accessed successfully!");
+  } catch (error) {
+    res.status(500).send("Error accessing protected data");
+  }
+});
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+```
+
 ## 🔒 **Security Considerations**
 
 - **Client Secret:** For localhost development, the `client_secret` is optional. For production, always include the `client_secret` on the server-side to ensure secure communication.
