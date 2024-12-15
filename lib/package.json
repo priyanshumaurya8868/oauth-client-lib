@@ -1,0 +1,20 @@
+{
+  "name": "oauth-client-lib",
+  "version": "1.0.1",
+  "description": "A library for handling OAuth authentication",
+  "main": "oauthClient.js",
+  "files": [
+    "oauthClient.js",
+    "README.md"
+  ],
+  "dependencies": {
+    "axios": "^1.7.9"
+  },
+  "keywords": [
+    "oauth",
+    "authentication",
+    "client"
+  ],
+  "author": "Priyanshu",
+  "license": "MIT"
+}
