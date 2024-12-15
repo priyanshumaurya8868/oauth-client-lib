@@ -3,12 +3,15 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import OAuthClient from "../lib/oauthClient.js";
 import path from "path";
+import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cookieParser());
 app.use(express.json());
+
+app.use(cors());
 
 const client = new OAuthClient({
   clientId: process.env.CLIENT_ID,
