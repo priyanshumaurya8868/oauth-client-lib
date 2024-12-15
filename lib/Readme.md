@@ -35,6 +35,7 @@ const client = new OAuthClient({
   authUrl: 'https://your-auth-domain/authorize',
   tokenUrl: 'https://your-auth-domain/oauth/token',
   revokeUrl: 'https://your-auth-domain/oauth/revoke',
+  clientSecret: 'your-client-secret', // Optional for localhost
 });
 ```
 
@@ -86,13 +87,14 @@ await client.logout();
 
 #### **Options**
 
-| Option        | Type     | Description                               |
-|---------------|----------|-------------------------------------------|
-| `clientId`    | `string` | Your OAuth client ID                      |
-| `redirectUri` | `string` | Redirect URI after authentication         |
-| `authUrl`     | `string` | Authorization URL                         |
-| `tokenUrl`    | `string` | Token endpoint URL                        |
-| `revokeUrl`   | `string` | Token revocation endpoint URL             |
+| Option         | Type     | Description                                       |
+|----------------|----------|---------------------------------------------------|
+| `clientId`     | `string` | Your OAuth client ID                              |
+| `redirectUri`  | `string` | Redirect URI after authentication                 |
+| `authUrl`      | `string` | Authorization URL                                 |
+| `tokenUrl`     | `string` | Token endpoint URL                                |
+| `revokeUrl`    | `string` | Token revocation endpoint URL                     |
+| `clientSecret` | `string` | Your OAuth client secret (optional for localhost) |
 
 ### **Methods**
 
@@ -116,6 +118,11 @@ Logs out the user and revokes tokens.
 
 - **Browsers**: Requires `axios` to be included via CDN.
 - **Node.js**: Compatible with Node.js environments.
+
+## 🔒 **Client Secret**
+
+- **Client Secret** is **optional** for local development with `localhost`.
+- For production or server-side applications, including a **Client Secret** is recommended for secure communication with the OAuth provider.
 
 ## 📄 **License**
 
