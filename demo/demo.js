@@ -1,8 +1,8 @@
 import OAuthClient from 'https://cdn.jsdelivr.net/npm/oauth-client-lib@1.0.2/oauthClient.js';
 
-const CLIENT_ID  = process.env.NEXT_PUBLIC_CLIENT_ID
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN
-const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URL
+const CLIENT_ID  =' 9wz6fewBMcSuEtMmlLNHu5aS5Fw2L1jp'
+const DOMAIN = 'dev-tinj28mfna224mob.us.auth0.com'
+const REDIRECT_URI = 'https://oauth-client-9a576u0wt-tech-priyanshu-projects.vercel.app/'
 
 const TOKEN_URL = `https://${DOMAIN}/oauth/token`;
 const REVOKE_URL = `https://${DOMAIN}/oauth/revoke`;
