@@ -1,8 +1,8 @@
-import OAuthClient from '../lib/oauthClient.js';
+import OAuthClient from 'https://cdn.jsdelivr.net/npm/oauth-client-lib@1.0.2/oauthClient.js';
 
 const CLIENT_ID  = "9wz6fewBMcSuEtMmlLNHu5aS5Fw2L1jp"
 const DOMAIN = "dev-tinj28mfna224mob.us.auth0.com";  
-const REDIRECT_URI = 'http://localhost:3000/demo/index.html'
+const REDIRECT_URI = 'http://localhost:3000/'
 
 const TOKEN_URL = `https://${DOMAIN}/oauth/token`;
 const REVOKE_URL = `https://${DOMAIN}/oauth/revoke`;

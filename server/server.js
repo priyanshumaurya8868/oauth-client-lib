@@ -2,8 +2,12 @@ import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import OAuthClient from "../lib/oauthClient.js";
-import path from "path";
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -20,16 +24,19 @@ const client = new OAuthClient({
   tokenUrl: process.env.TOKEN_URL,
 });
 
-app.use(express.static(path.join(__dirname, '../demo')));
 // Catch-all route to serve 'index.html' for frontend routes
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../demo/index.html'));
-  });
+app.use(express.static(path.join(__dirname, '../demo'), {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+      }
+    }
+  }));
 
 // Route to initiate the OAuth flow
-app.get("/api/login", (req, res) => {
+app.get("/api/login", async(req, res) => {
   try {
-    const authUrl = client.startAuthFlow();
+    const authUrl = await client.startAuthFlow();
     res.redirect(authUrl);
   } catch (error) {
     console.log("Error :", error);
