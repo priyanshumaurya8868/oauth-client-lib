@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import OAuthClient from "../lib/oauthClient.js";
+import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -16,8 +17,14 @@ const client = new OAuthClient({
   tokenUrl: process.env.TOKEN_URL,
 });
 
+app.use(express.static(path.join(__dirname, '../demo')));
+// Catch-all route to serve 'index.html' for frontend routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../demo/index.html'));
+  });
+
 // Route to initiate the OAuth flow
-app.get("/login", (req, res) => {
+app.get("/api/login", (req, res) => {
   try {
     const authUrl = client.startAuthFlow();
     res.redirect(authUrl);
@@ -28,7 +35,7 @@ app.get("/login", (req, res) => {
 });
 
 // Callback route to handle the OAuth provider's response
-app.get("/callback", async (req, res) => {
+app.get("/api/callback", async (req, res) => {
   const { code } = req.query;
   try {
     const tokenData = await client.handleCallback(code);
@@ -46,7 +53,7 @@ app.get("/callback", async (req, res) => {
 });
 
 // Protected route example
-app.get("/profile", async (req, res) => {
+app.get("/api/profile", async (req, res) => {
   const token = req.cookies.access_token;
   if (!token) {
     return res.status(401).send("Unauthorized: No token found");
