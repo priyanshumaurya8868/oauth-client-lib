@@ -1,7 +1,7 @@
 {
   "name": "oauth-client-lib",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A JavaScript library for OAuth 2.0 authorization flows",
   "main": "lib/oauthClient.js",
   "scripts": {
